@@ -7,7 +7,7 @@ import pandas as pd
 
 from IPython.display import display_html
 
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import RobustScaler
 
 #
 # Functions
@@ -44,21 +44,24 @@ def read_dataset(filepath):
 
     # Scale data
     scaled_df = pd.DataFrame(
-            StandardScaler().fit_transform(df),
+            RobustScaler().fit_transform(df),
             index = df.index,
             columns = df.columns
         )
 
     return df, scaled_df
 
-def display_side_by_side(*args):
+def display_side_by_side(*args, titles = None):
     """
         Display dataframes side-by-side
     """
 
     html_str = ''
 
-    for df in args:
+    for idx, df in enumerate(args):
+        html_str += '<div style = "display: block; padding-right:20px; float: left;">'
+        if type(titles) == list: html_str += '<p style = "text-align: center; font-weight: bold; font-size: 16px;">' + str(titles[idx]) + '</p>'
         html_str += df.to_html()
+        html_str += '</div>'
 
-    display_html(html_str.replace('table','table style="display:inline; padding-right: 20px"'), raw=True)
+    display_html(html_str, raw=True)
