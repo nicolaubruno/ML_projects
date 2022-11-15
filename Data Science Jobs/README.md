@@ -5,4 +5,4 @@ In this project, we explore **clustering** methods by using the [dataset](https:
 - **Hierarchical Clustering** (hierarchical.ipynb)
 - **Partitional Clustering** (partitional.ipynb)
 
-We first perform a descriptive analysis on the data (descriptive-analysis.ipynb) in order to properly apply the clustering methods above. 
+We first perform a **descriptive analysis** on the data (descriptive-analysis.ipynb) in order to properly apply the clustering methods above. 
