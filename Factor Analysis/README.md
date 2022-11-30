@@ -1,16 +1,21 @@
-# Exploratory Factor Analysis
+# Dimensionality reduction
 
-In this project, we shall apply **exploratory factor analysis** in the [dataset](http://archive.ics.uci.edu/ml/datasets/Student+Performance) from the **UCI Machine Learning Repository** that contains grades, demographic, and social information of students in secondary education from two Portuguese schools. There are two datasets related with two subjects: Mathematics (mat) and Portuguese language (por). 
+In this project, we shall reduce the *dimension* of the [dataset](http://archive.ics.uci.edu/ml/datasets/Student+Performance) from the **UCI Machine Learning Repository** through **factor analysis**. The dataset contains performance information of students from two Portuguese schools in secondary education. There are two datasets:
 
-In the `descriptive_analysis.ipynb` file, we perform a *descriptive analysis* on the dataset. Thus, we set the relevant variables to apply factor analysis.
+- `dataset/student-mat.csv`: a CSV file that contains grades, demographics, and social information of students in the **mathematics** subject;
 
-## Important files
+- `dataset/student-por.csv`: a CSV file that contains grades, demographics, and social information of students in the **Portuguese language** subject;
 
-- `dataset/student-mat.csv`: CSV file (dataset) with the student's grades in Mathematics;
+We seek **factors** that concentrate information to better explain the final grades in each dataset. For this purpose, we shall apply the following methods:
 
-- `dataset/student-por.csv`: CSV file (dataset) with the student's grades in Portuguese;
+- **Principal Component Analysis (PCA)** for **numerical variables**<br>
+Jupyter Notebook: `PCA.ipynb`;
 
-- `descriptive_analysis.ipynb`: Jupyter Notebook that contains a descriptive analysis of the dataset;
+- **Multiple Correspondence Analysis (MCA)** for **categorical variables**<br>
+Jupyter Notebook: `MCA.ipynb`;
+
+- **Factor Analysis of Mixed Data (FAMD)** for a mixed of **numerical** and **categorical variables**<br>
+Jupyter Notebook: `FAMD.ipynb`).
 
 ## Dataset
 
@@ -36,7 +41,7 @@ In the `descriptive_analysis.ipynb` file, we perform a *descriptive analysis* on
 | 18 | paid | extra paid classes within the course subject | {'yes', 'no'} |
 | 19 | activities | extra-curricular activities | {'yes', 'no'} |
 | 20 | nursery | attended nursery school | {'yes', 'no'} |
-| 21 | higher | wants to take higher education | {'yes', 'no'}) |
+| 21 | higher | wants to take higher education | {'yes', 'no'} |
 | 22 | internet | Internet access at home | {'yes', 'no'} |
 | 23 | romantic | with a romantic relationship | {'yes', 'no'} |
 | 24 | famrel | quality of family relationships | from 1 (very bad) to 5 (excellent) |
