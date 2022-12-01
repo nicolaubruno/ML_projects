@@ -1,21 +1,21 @@
 # Dimensionality reduction
 
-In this project, we shall reduce the *dimension* of the [dataset](http://archive.ics.uci.edu/ml/datasets/Student+Performance) from the **UCI Machine Learning Repository** through **factor analysis**. The dataset contains performance information of students from two Portuguese schools in secondary education. There are two datasets:
+In this project, we shall reduce the *dimension* of two [datasets](http://archive.ics.uci.edu/ml/datasets/Student+Performance) from the **UCI Machine Learning Repository** through **factor analysis**. These datasets contain performance information of students in two subjects, mathematics (*mat*) and Portuguese language (*por*), at the secondary education level. There are two files related to these datasets:
 
 - `dataset/student-mat.csv`: a CSV file that contains grades, demographics, and social information of students in the **mathematics** subject;
 
 - `dataset/student-por.csv`: a CSV file that contains grades, demographics, and social information of students in the **Portuguese language** subject;
 
-We seek **factors** that concentrate information to better explain the final grades in each dataset. For this purpose, we shall apply the following methods:
+We seek **factors** that sum up the majority of the **total variance**. For this purpose, we shall apply the following methods:
 
 - **Principal Component Analysis (PCA)** for **numerical variables**<br>
-Jupyter Notebook: `PCA.ipynb`;
+(Jupyter Notebook: `PCA.ipynb`);
 
 - **Multiple Correspondence Analysis (MCA)** for **categorical variables**<br>
-Jupyter Notebook: `MCA.ipynb`;
+(Jupyter Notebook: `MCA.ipynb`);
 
 - **Factor Analysis of Mixed Data (FAMD)** for a mixed of **numerical** and **categorical variables**<br>
-Jupyter Notebook: `FAMD.ipynb`).
+(Jupyter Notebook: `FAMD.ipynb`).
 
 ## Dataset
 

@@ -38,10 +38,10 @@ class Dataset():
         # Check variables type
         #---
         if variables == 'categorical':
-            df = df.select_dtypes(exclude = 'number')
+            df = df.select_dtypes(include = 'category')
 
         elif variables == 'numerical':
-            df = df.select_dtypes(include = 'number')
+            df = df.select_dtypes(include = 'number').astype('int32')
 
         return df
 
@@ -68,10 +68,10 @@ class Dataset():
         self._df = pd.concat([mat, por]).dropna()
 
         # Set categorical variables
-        self.__set_cat_vars()
+        self.__set_vars_type()
 
     # Set categorical variables
-    def __set_cat_vars(self):
+    def __set_vars_type(self):
         # Variables with standard category
         std_cat_vars = [
                 'school',
