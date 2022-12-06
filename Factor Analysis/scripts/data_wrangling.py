@@ -16,118 +16,105 @@ class Dataset():
 
     # Constructor
     def __init__(self):
-        # Set Pandas DataFrame
-        self.__set_df()
+        # Columns to identify the same student in both datasets
+        self.__common_cols = ["school", "sex", "age", "address", "famsize", "Pstatus", "Medu", "Fedu", "Mjob", "Fjob", "reason", "nursery", "internet"]
 
-        self._df
-
+        # Set Pandas DataFrames related to both datesets
+        df = self.__load_df()
 
     # Get dataframe
     def get_df(self, subject = None, variables = None):
-        # Complete DataFrame
-        df = self.df
+        df = self._df
 
-        # Check subject
+        # Get information related to a specific subject
         #---
         if subject == 'mat':
-            df = self._df.where(df['subject'] == 'mat').dropna().drop(columns = ['subject'])
-
-        elif subject == 'por':
-            df = self._df.where(df['subject'] == 'por').dropna().drop(columns = ['subject'])
-
-        # Check variables type
-        #---
-        if variables == 'categorical':
-            df = df.select_dtypes(include = 'category')
-
-        elif variables == 'numerical':
-            df = df.select_dtypes(include = 'number').astype('int32')
+            df = df[~df['G3_mat'].isnull()]
 
         return df
 
+    # Build dataframe containing information from all datasets
+    def __load_df(self):
+        #----- Get all datasets -----#
 
-    # Set a single Pandas DataFrame for all datasets
-    def __set_df(self):
-        # Get dataset related to the mathematics subject
+        # Mathematics
         mat = pd.read_csv(
                 'dataset/student-mat.csv',
                 sep = ';'
             )
 
-        mat['subject'] = 'mat'
-
-        # Get dataset related to the Portuguese language subject
+        # Portuguese
         por = pd.read_csv(
                 'dataset/student-por.csv',
                 sep = ';'
             )
 
-        por['subject'] = 'por'
-
         # Join dataframes
-        self._df = pd.concat([mat, por]).dropna()
-
-        # Set categorical variables
+        self._df = pd.merge(mat, por, how = 'outer', left_on = self.__common_cols, right_on = self.__common_cols, suffixes = ('_mat', '_por'))
         self.__set_vars_type()
 
     # Set categorical variables
     def __set_vars_type(self):
-        # Variables with standard category
-        std_cat_vars = [
-                'school',
-                'sex',
-                'address',
-                'famsize',
-                'Pstatus',
-                'Mjob',
-                'Fjob',
-                'reason',
-                'guardian',
-                'subject'
-            ]
+        # Merged cols
+        def merged_cols(cols):
+            merged_cols = []
 
-        self._df = self._df.astype({var:'category' for var in std_cat_vars})
+            for col in cols:
+                if col in self.__common_cols:
+                    merged_cols.append(col)
 
-        # Dichotomous variables
-        dichotomous_vars = [
-                'schoolsup',
-                'famsup',
-                'paid',
-                'activities',
-                'nursery',
-                'higher',
-                'internet',
-                'romantic'
-            ]
+                else:
+                    merged_cols.append(col + '_mat')
+                    merged_cols.append(col + '_por')
 
-        self._df = self._df.astype({var:'category' for var in dichotomous_vars})
+            return merged_cols
 
-        # Likert scales
+        #----- Variables with standard category -----#
+
+        cols = ['school', 'sex', 'address', 'famsize', 'Pstatus', 'Mjob', 'Fjob', 'reason', 'guardian']
+        self._df = self._df.astype({col:'category' for col in merged_cols(cols)})
+
+        #----- Dichotomous variables -----#
+
+        cols = ['schoolsup', 'famsup', 'paid', 'activities', 'nursery', 'higher', 'internet', 'romantic']
+        self._df = self._df.astype({col:'category' for col in merged_cols(cols)})
+
+        #----- Likert scales -----#
+
         likert_scale_01 = pd.api.types.CategoricalDtype([i for i in range(5)], ordered = True)
         likert_scale_02 = pd.api.types.CategoricalDtype([i+1 for i in range(4)], ordered = True)
         likert_scale_03 = pd.api.types.CategoricalDtype([i+1 for i in range(5)], ordered = True)
 
-        vars_likert_01 = [
-                'Medu',
-                'Fedu'
-            ]
+        vars_likert_01 = ['Medu', 'Fedu']
+        self._df = self._df.astype({var:likert_scale_01 for var in merged_cols(vars_likert_01)})
 
-        self._df = self._df.astype({var:likert_scale_01 for var in vars_likert_01})
+        vars_likert_02 = ['traveltime', 'studytime']
+        self._df = self._df.astype({var:likert_scale_02 for var in merged_cols(vars_likert_02)})
 
-        vars_likert_02 = [
-                'traveltime',
-                'studytime'
-            ]
+        vars_likert_03 = ['famrel', 'freetime', 'goout', 'Dalc', 'Walc', 'health']
+        self._df = self._df.astype({var:likert_scale_03 for var in merged_cols(vars_likert_03)})
 
-        self._df = self._df.astype({var:likert_scale_02 for var in vars_likert_02})
+        #----- Discrete numeric variables -----#
 
-        vars_likert_03 = [
-                'famrel',
-                'freetime',
-                'goout',
-                'Dalc',
-                'Walc',
-                'health'
-            ]
+        cols = ['age', 'failures', 'absences']
+        self._df = self._df.astype({col:'Int32' for col in merged_cols(cols)})
 
-        self._df = self._df.astype({var:likert_scale_03 for var in vars_likert_03})
+        #----- Continuous numeric variables -----#
+
+        cols = ['G1', 'G2', 'G3']
+        self._df = self._df.astype({col:'float32' for col in merged_cols(cols)})
+
+    # Get only grades
+    def get_grades(self, subject = None):
+        # Mathematics
+        if subject == 'mat' or subject == 'por':
+            df = self.get_df(subject, 'numerical')[['G1', 'G2', 'G3']].astype('float32')
+
+        # All subjects
+        elif subject == 'both':
+            mat_df = self.get_df('mat', 'numerical')[['G1', 'G2', 'G3']].astype('float32')
+            por_df = self.get_df('mat', 'numerical')[['G1', 'G2', 'G3']].astype('float32')
+
+            df = pd.merge(mat_df, por_df)
+
+        return df
