@@ -6,10 +6,20 @@ class Dataset():
     # Attributes
     #---
 
-    # Pandas DataFrame related to the all datasets
+    # DataFrame related to both subjects
     @property
     def df(self):
         return self._df
+
+    # DataFrame related to the mathematics subject
+    @property
+    def df_mat(self):
+        return self._df_mat
+
+    # DataFrame related to the Portuguese language subject
+    @property
+    def df_por(self):
+        return self._df_por
 
     # Methods
     #---
@@ -23,13 +33,34 @@ class Dataset():
         df = self.__load_df()
 
     # Get dataframe
-    def get_df(self, subject = None, variables = None):
-        df = self._df
-
-        # Get information related to a specific subject
+    def get_df(self, subject = None, dtype = None):
+        # Select subjects
         #---
+
+        # Mathematics
         if subject == 'mat':
-            df = df[~df['G3_mat'].isnull()]
+            df = self.df_mat
+
+        # Portuguese language
+        elif subject == 'por':
+            df = self.df_por
+
+        # Both
+        else:
+            df = self.df
+
+        # Select variables type
+        #---
+
+        # Float
+        if dtype == 'float':
+            df = df.select_dtypes(include = 'float32')
+
+        elif dtype == 'int':
+            df = df.select_dtypes(include = 'Int32')
+
+        elif dtype == 'category':
+            df = df.select_dtypes(include = 'category')
 
         return df
 
@@ -38,19 +69,21 @@ class Dataset():
         #----- Get all datasets -----#
 
         # Mathematics
-        mat = pd.read_csv(
+        self._df_mat = pd.read_csv(
                 'dataset/student-mat.csv',
                 sep = ';'
             )
 
         # Portuguese
-        por = pd.read_csv(
+        self._df_por = pd.read_csv(
                 'dataset/student-por.csv',
                 sep = ';'
             )
 
-        # Join dataframes
-        self._df = pd.merge(mat, por, how = 'outer', left_on = self.__common_cols, right_on = self.__common_cols, suffixes = ('_mat', '_por'))
+        # Both subjects
+        self._df = pd.merge(self.df_mat, self.df_por, how = 'inner', left_on = self.__common_cols, right_on = self.__common_cols, suffixes = ('_mat', '_por'))
+
+        # Set variables type
         self.__set_vars_type()
 
     # Set categorical variables
@@ -73,11 +106,15 @@ class Dataset():
 
         cols = ['school', 'sex', 'address', 'famsize', 'Pstatus', 'Mjob', 'Fjob', 'reason', 'guardian']
         self._df = self._df.astype({col:'category' for col in merged_cols(cols)})
+        self._df_mat = self._df_mat.astype({col:'category' for col in cols})
+        self._df_por = self._df_por.astype({col:'category' for col in cols})
 
         #----- Dichotomous variables -----#
 
         cols = ['schoolsup', 'famsup', 'paid', 'activities', 'nursery', 'higher', 'internet', 'romantic']
         self._df = self._df.astype({col:'category' for col in merged_cols(cols)})
+        self._df_mat = self._df_mat.astype({col:'category' for col in cols})
+        self._df_por = self._df_por.astype({col:'category' for col in cols})
 
         #----- Likert scales -----#
 
@@ -87,22 +124,32 @@ class Dataset():
 
         vars_likert_01 = ['Medu', 'Fedu']
         self._df = self._df.astype({var:likert_scale_01 for var in merged_cols(vars_likert_01)})
+        self._df_mat = self._df_mat.astype({col:likert_scale_01 for col in vars_likert_01})
+        self._df_por = self._df_por.astype({col:likert_scale_01 for col in vars_likert_01})
 
         vars_likert_02 = ['traveltime', 'studytime']
         self._df = self._df.astype({var:likert_scale_02 for var in merged_cols(vars_likert_02)})
+        self._df_mat = self._df_mat.astype({col:likert_scale_02 for col in vars_likert_02})
+        self._df_por = self._df_por.astype({col:likert_scale_02 for col in vars_likert_02})
 
         vars_likert_03 = ['famrel', 'freetime', 'goout', 'Dalc', 'Walc', 'health']
         self._df = self._df.astype({var:likert_scale_03 for var in merged_cols(vars_likert_03)})
+        self._df_mat = self._df_mat.astype({col:likert_scale_03 for col in vars_likert_03})
+        self._df_por = self._df_por.astype({col:likert_scale_03 for col in vars_likert_03})
 
         #----- Discrete numeric variables -----#
 
         cols = ['age', 'failures', 'absences']
         self._df = self._df.astype({col:'Int32' for col in merged_cols(cols)})
+        self._df_mat = self._df_mat.astype({col:'Int32' for col in cols})
+        self._df_por = self._df_por.astype({col:'Int32' for col in cols})
 
         #----- Continuous numeric variables -----#
 
         cols = ['G1', 'G2', 'G3']
         self._df = self._df.astype({col:'float32' for col in merged_cols(cols)})
+        self._df_mat = self._df_mat.astype({col:'float32' for col in cols})
+        self._df_por = self._df_por.astype({col:'float32' for col in cols})
 
     # Get only grades
     def get_grades(self, subject = None):

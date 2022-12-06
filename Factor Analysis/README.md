@@ -1,12 +1,12 @@
 # Factor Analysis
 
-In this project, we shall reduce the *dimension* of two [datasets](http://archive.ics.uci.edu/ml/datasets/Student+Performance) from the **UCI Machine Learning Repository** through **exploratory factor analysis**, also known as **EFA**. These datasets contain performance information of students at the secondary education level in two subjects, mathematics (*mat*) and Portuguese language (*por*). There are two files related to these datasets:
+In this project, we shall reduce the *dimension* of [datasets](http://archive.ics.uci.edu/ml/datasets/Student+Performance) from the **UCI Machine Learning Repository** by using **exploratory factor analysis** (**EFA**). These datasets contain performance information of students at the secondary education level in two subjects, mathematics (*mat*) and Portuguese language (*por*). There are two files related to these datasets:
 
 - `dataset/student-mat.csv`: a CSV file that contains grades, demographics, and social information of students in the **mathematics** subject;
 
 - `dataset/student-por.csv`: a CSV file that contains grades, demographics, and social information of students in the **Portuguese language** subject;
 
-We seek **factors** that sum up the majority of the **total variance**. For this purpose, we shall apply the following methods:
+We shall apply the following methods:
 
 - **Principal Component Analysis (PCA)** for **continuous numerical variables**<br>
 (Jupyter Notebook: `PCA.ipynb`);
