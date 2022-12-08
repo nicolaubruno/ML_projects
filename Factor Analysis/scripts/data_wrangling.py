@@ -150,18 +150,3 @@ class Dataset():
         self._df = self._df.astype({col:'float32' for col in merged_cols(cols)})
         self._df_mat = self._df_mat.astype({col:'float32' for col in cols})
         self._df_por = self._df_por.astype({col:'float32' for col in cols})
-
-    # Get only grades
-    def get_grades(self, subject = None):
-        # Mathematics
-        if subject == 'mat' or subject == 'por':
-            df = self.get_df(subject, 'numerical')[['G1', 'G2', 'G3']].astype('float32')
-
-        # All subjects
-        elif subject == 'both':
-            mat_df = self.get_df('mat', 'numerical')[['G1', 'G2', 'G3']].astype('float32')
-            por_df = self.get_df('mat', 'numerical')[['G1', 'G2', 'G3']].astype('float32')
-
-            df = pd.merge(mat_df, por_df)
-
-        return df
